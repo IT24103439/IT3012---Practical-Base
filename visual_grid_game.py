@@ -78,6 +78,10 @@ class VisualGridHuntGame:
             self.score -= 5
         else:
             self.agent_pos = new_pos
+        
+        # Step 2.3 Deduct 15 score points when intersects with trap - IT24103439
+        if tuple_pos in self.toxic_traps:
+            self.score -= 15
 
         tuple_pos = tuple(self.agent_pos)
         if tuple_pos in self.food_positions:
