@@ -161,6 +161,16 @@ class GridGameGUI:
             self.canvas.create_oval(x1, y1, x1 + self.cell_size * 0.5, y1 + self.cell_size * 0.5, fill="#f59e0b",
                                     outline="#d97706")
 
+        # Toxic_trap icon
+        for tx, ty in self.env.toxic_traps:
+            offset = self.cell_size * 0.25
+            x1 = tx * self.cell_size + offset
+            y1 = (self.env.height - 1 - ty) * self.cell_size + offset
+            sz = self.cell_size * 0.5
+            
+            self.canvas.create_line(x1, y1, x1 + sz, y1 + sz, fill="#ef4444", width=max(2, int(self.cell_size * 0.12)), capstyle=tk.ROUND)
+            self.canvas.create_line(x1, y1 + sz, x1 + sz, y1, fill="#ef4444", width=max(2, int(self.cell_size * 0.12)), capstyle=tk.ROUND)
+
         for ox, oy in self.env.opponents:
             offset = self.cell_size * 0.2
             x1 = ox * self.cell_size + offset
