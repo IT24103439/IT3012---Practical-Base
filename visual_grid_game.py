@@ -56,7 +56,9 @@ class VisualGridHuntGame:
             'hit_wall': tuple(self.agent_pos) in self.walls,
             'collision': self.collision,
             'score': self.score,
-            'remaining_food': len(self.food_positions)
+            'remaining_food': len(self.food_positions),
+            'smells_toxin': tuple(self.agent_pos) in self.toxic_traps # Step 2.2 Add smells_toxin sensor - IT24103439
+
         }
 
     def execute_action(self, action: str):
