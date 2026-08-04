@@ -1,7 +1,7 @@
 # visual_grid_game.py
 import random
 import tkinter as tk
-from agent import SimpleReflexAgent
+from agent import SimpleReflexAgent, ModelBasedAgent
 
 
 class VisualGridHuntGame:
@@ -118,7 +118,7 @@ class VisualGridHuntGame:
                 self.collision = True
 
     def is_done(self) -> bool:
-        return len(self.food_positions) == 0 or self.steps >= 60 or self.collision
+        return len(self.food_positions) == 0 or self.steps >= 200 or self.collision
 
 
 class GridGameGUI:
@@ -131,7 +131,7 @@ class GridGameGUI:
         self.env = VisualGridHuntGame(width=width, height=height, num_food=num_food, num_opponents=num_opponents,
                                       custom_walls=walls)
 
-        self.agent = SimpleReflexAgent()  # Use the Simple Reflex Agent for decision-making - IT24103439
+        self.agent = ModelBasedAgent()  # Use the Model Based Agent for decision-making - IT24103439
 
         # Dynamically calculate cell size so the total canvas fits nicely within a 600x600 window ceiling
         max_canvas_dim = 600
