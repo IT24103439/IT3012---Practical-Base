@@ -47,22 +47,35 @@ class VisualGridHuntGame:
         self.score = 0
         self.steps = 0
         self.collision = False
+        self.facing = 'Up' # Track current facing direction
 
+    # P02 - Step 1.1: Setting the Trap (Partial Observability) - IT24103439
     def get_percept(self) -> dict:
+        x, y = self.agent_pos
+        dx, dy = 0, 0
+        
+        if self.facing == 'Up':
+            dy = 1
+        elif self.facing == 'Down':
+            dy = -1
+        elif self.facing == 'Left':
+            dx = -1
+        elif self.facing == 'Right':
+            dx = 1
+            
+        adj_x, adj_y = x + dx, y + dy
+        
+        wall_ahead = (adj_x, adj_y) in self.walls or not (0 <= adj_x < self.width and 0 <= adj_y < self.height)
+        food_here = (adj_x, adj_y) in self.food_positions
+        
         return {
-            'agent_pos': list(self.agent_pos),
-            'opponent_positions': [list(op) for op in self.opponents],
-            'smells_food': tuple(self.agent_pos) in self.food_positions,
-            'hit_wall': tuple(self.agent_pos) in self.walls,
-            'collision': self.collision,
-            'score': self.score,
-            'remaining_food': len(self.food_positions),
-            'smells_toxin': tuple(self.agent_pos) in self.toxic_traps # Step 2.2 Add smells_toxin sensor - IT24103439
-
+            'wall_ahead': wall_ahead,
+            'food_here': food_here
         }
 
     def execute_action(self, action: str):
         self.steps += 1
+        self.facing = action # Update current facing direction
         new_pos = list(self.agent_pos)
 
         if action == 'Up':
