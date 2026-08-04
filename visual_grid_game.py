@@ -1,6 +1,7 @@
 # visual_grid_game.py
 import random
 import tkinter as tk
+from agent import SimpleReflexAgent
 
 
 class VisualGridHuntGame:
@@ -130,6 +131,8 @@ class GridGameGUI:
         self.env = VisualGridHuntGame(width=width, height=height, num_food=num_food, num_opponents=num_opponents,
                                       custom_walls=walls)
 
+        self.agent = SimpleReflexAgent()  # Use the Simple Reflex Agent for decision-making - IT24103439
+
         # Dynamically calculate cell size so the total canvas fits nicely within a 600x600 window ceiling
         max_canvas_dim = 600
         self.cell_size = max(20, min(max_canvas_dim // self.env.width, max_canvas_dim // self.env.height))
@@ -203,7 +206,8 @@ class GridGameGUI:
 
         def step():
             if not self.env.is_done():
-                action = random.choice(['Up', 'Down', 'Left', 'Right'])
+                current_percept = self.env.get_percept() # Get the local boolean percepts from the environment - IT24103439
+                action = self.agent.sense_and_act(current_percept) # Pass the percept to the agent to get the action via IF-THEN rules - IT24103439
                 self.env.execute_action(action)
 
                 self.draw_grid()
