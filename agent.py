@@ -1,5 +1,7 @@
 import random
-from collections import deque, heapq
+import random
+from collections import deque
+import heapq
 
 # agent.py
 class GreedyGridAgent:
@@ -166,3 +168,34 @@ class SearchAgent:
                 if next_pos not in reached:
                     heapq.heappush(frontier, (cost + 1, next_pos, path + [action]))
         return []
+
+    # P03 - Step 1.3: Executing and Comparing Offline Plans
+    def __init__(self):
+        self.plan = []  # Stores the sequence of actions to execute - IT24103439
+        self.active_algo = 'BFS'    # Switch algorithms - IT24103439
+
+    # If plan is empty, run the chosen search to refill it
+    def sense_and_act(self, percept: dict) -> str:
+        agent_pos = tuple(percept['agent_pos'])
+        all_food  = percept['all_food']
+        walls     = set(map(tuple, percept['walls']))
+        grid_size = percept['grid_size']
+
+        if not self.plan:
+            if not all_food:
+                return 'Up' # No food left, fallback action - IT24103439
+            closest_food = min(all_food, key=lambda f: abs(f[0] - agent_pos[0]) + abs(f[1] - agent_pos[1])) # Find closest food using Manhattan distance - IT24103439
+
+            # Run the selected search algorithm - IT24103439
+            if self.active_algo == 'BFS':
+                self.plan = self.bfs_search(agent_pos, tuple(closest_food), walls, grid_size)
+            elif self.active_algo == 'DFS':
+                self.plan = self.dfs_search(agent_pos, tuple(closest_food), walls, grid_size)
+            elif self.active_algo == 'UCS':
+                self.plan = self.ucs_search(agent_pos, tuple(closest_food), walls, grid_size)
+
+        # Execute next action from the front of the plan - IT24103439
+        if self.plan:
+            return self.plan.pop(0)
+
+        return 'Up'   # Safety fallback if search returned empty path - IT24103439

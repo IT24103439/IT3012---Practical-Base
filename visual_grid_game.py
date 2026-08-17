@@ -1,7 +1,7 @@
 # visual_grid_game.py
 import random
 import tkinter as tk
-from agent import SimpleReflexAgent, ModelBasedAgent
+from agent import SimpleReflexAgent, ModelBasedAgent, SearchAgent
 
 
 class VisualGridHuntGame:
@@ -135,7 +135,7 @@ class GridGameGUI:
         self.env = VisualGridHuntGame(width=width, height=height, num_food=num_food, num_opponents=num_opponents,
                                       custom_walls=walls)
 
-        self.agent = ModelBasedAgent()  # Use the Model Based Agent for decision-making - IT24103439
+        self.agent = SearchAgent()  # Use the Search Agent for decision-making - IT24103439
 
         # Dynamically calculate cell size so the total canvas fits nicely within a 600x600 window ceiling
         max_canvas_dim = 600
@@ -215,7 +215,7 @@ class GridGameGUI:
                 self.env.execute_action(action)
 
                 self.draw_grid()
-                self.label.config(text=f"Score: {self.env.score} | Steps: {self.env.steps} | Action: {action}")
+                self.label.config(text=f"Score: {self.env.score} | Steps: {self.env.steps} | "f"Action: {action} | Algo: {self.agent.active_algo}") # Display the searching alogrithm as well - IT24103439
                 self.root.after(250, step)
             else:
                 end_text = f"Collision! Game Over! Final Score: {self.env.score}" if self.env.collision else f"Finished! Final Score: {self.env.score}"
