@@ -1,4 +1,5 @@
 import random
+from collections import deque, heapq
 
 # agent.py
 class GreedyGridAgent:
@@ -96,3 +97,72 @@ class ModelBasedAgent:
 
         self.last_action = action
         return action
+
+
+# P03 - Step 1.2: The Search Agent (BFS, DFS, UCS) - IT24103439
+class SearchAgent:
+    """A Goal-Based Planning Agent that uses BFS, DFS, or UCS to find a path to the nearest food pellet before taking any physical action."""
+
+    # Helper function which returns valid (neighbour_position, action) pairs from a given position - IT24103439
+    def _get_neighbours(self, pos, walls, grid_size):
+        x, y = pos
+        width, height = grid_size
+        neighbours = []
+        for action, (dx, dy) in [('Up', (0, 1)), ('Down', (0, -1)), ('Left', (-1, 0)), ('Right', (1, 0))]:
+            nx, ny = x + dx, y + dy
+            # Only add if within grid bounds and not a wall - IT24103439
+            if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in walls:
+                neighbours.append(((nx, ny), action))
+        return neighbours
+
+    # BFS: explores shallowest nodes first - IT24103439
+    def bfs_search(self, start, goal, walls, grid_size):
+        frontier = deque()
+        frontier.append((start, []))
+        reached = set() # Graph search: prevents revisiting nodes - IT24103439
+        reached.add(start)
+
+        while frontier:
+            current_pos, path = frontier.popleft()  # FIFO: pop from left - IT24103439
+            if current_pos == goal:
+                return path
+            for next_pos, action in self._get_neighbours(current_pos, walls, grid_size):
+                if next_pos not in reached:
+                    reached.add(next_pos)
+                    frontier.append((next_pos, path + [action]))
+        return []
+
+    # DFS: explores deepest nodes first - IT24103439
+    def dfs_search(self, start, goal, walls, grid_size):
+        frontier = []
+        frontier.append((start, []))
+        reached = set() # Graph search - IT24103439
+        reached.add(start)
+
+        while frontier:
+            current_pos, path = frontier.pop()  # LIFO: pop from right - IT24103439
+            if current_pos == goal:
+                return path
+            for next_pos, action in self._get_neighbours(current_pos, walls, grid_size):
+                if next_pos not in reached:
+                    reached.add(next_pos)
+                    frontier.append((next_pos, path + [action]))
+        return []
+
+    # UCS: orders by total path cost g(n) - IT24103439
+    def ucs_search(self, start, goal, walls, grid_size):
+        frontier = []
+        heapq.heappush(frontier, (0, start, []))
+        reached = set() # Graph search - IT24103439
+
+        while frontier:
+            cost, current_pos, path = heapq.heappop(frontier)   # Pop lowest cost - IT24103439
+            if current_pos in reached:
+                continue
+            reached.add(current_pos)
+            if current_pos == goal:
+                return path
+            for next_pos, action in self._get_neighbours(current_pos, walls, grid_size):
+                if next_pos not in reached:
+                    heapq.heappush(frontier, (cost + 1, next_pos, path + [action]))
+        return []
