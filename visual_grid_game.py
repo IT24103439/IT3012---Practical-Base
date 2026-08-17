@@ -50,7 +50,7 @@ class VisualGridHuntGame:
         self.collision = False
         self.facing = 'Up' # Track current facing direction
 
-    # P02 - Step 1.1: Setting the Trap (Partial Observability) - IT24103439
+    # P03 - Step 1.1: Exposing the World Model - IT24103439
     def get_percept(self) -> dict:
         x, y = self.agent_pos
         dx, dy = 0, 0
@@ -71,7 +71,11 @@ class VisualGridHuntGame:
         
         return {
             'wall_ahead': wall_ahead,
-            'food_here': food_here
+            'food_here': food_here,
+            'agent_pos': list(self.agent_pos), # Agent's current position (required for search start state) - IT24103439
+            'grid_size': (self.width, self.height),
+            'walls': list(self.walls),
+            'all_food': list(self.food_positions)
         }
 
     def execute_action(self, action: str):
