@@ -217,12 +217,13 @@ class SearchAgent:
     # P03 - Step 1.3: Executing and Comparing Offline Plans
     def __init__(self):
         self.plan = []  # Stores the sequence of actions to execute - IT24103439
-        self.active_algo = 'BFS'    # Switch algorithms - IT24103439
+        self.active_algo = 'AStar'    # Active search algorithm (BFS, DFS, UCS, AStar) - IT24103439
 
     # If plan is empty, run the chosen search to refill it
     def sense_and_act(self, percept: dict) -> str:
         agent_pos = tuple(percept['agent_pos'])
-        all_food  = percept['all_food']
+        # Extract remaining food from percept - IT24103439
+        all_food  = percept.get('remaining_food', percept.get('all_food', []))
         walls     = set(map(tuple, percept['walls']))
         grid_size = percept['grid_size']
 
@@ -238,6 +239,9 @@ class SearchAgent:
                 self.plan = self.dfs_search(agent_pos, tuple(closest_food), walls, grid_size)
             elif self.active_algo == 'UCS':
                 self.plan = self.ucs_search(agent_pos, tuple(closest_food), walls, grid_size)
+            # P04 - Step 1.3: Integrate A* into decision loop - IT24103439
+            elif self.active_algo == 'AStar':
+                self.plan = self.astar_search(agent_pos, tuple(closest_food), walls, grid_size, heuristic_type='manhattan')
 
         # Execute next action from the front of the plan - IT24103439
         if self.plan:
