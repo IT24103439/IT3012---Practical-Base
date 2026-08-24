@@ -178,6 +178,42 @@ class SearchAgent:
                     heapq.heappush(frontier, (cost + 1, next_pos, path + [action]))
         return []
 
+    # P04 - Step 1.2: A* Search Implementation - IT24103439
+    def astar_search(self, start_pos, goal_pos, walls, grid_size, heuristic_type='manhattan'):
+        frontier = []
+        reached_states = set()  # Graph search: prevents revisiting nodes - IT24103439
+
+        def compute_heuristic(pos):
+            if heuristic_type == 'euclidean':
+                return self.euclidean_distance(pos, goal_pos)
+            return self.manhattan_distance(pos, goal_pos)
+
+        # Initial state tuple: (f_cost, g_cost, current_pos, path_taken) where f = g + h - IT24103439
+        g_start = 0
+        h_start = compute_heuristic(start_pos)
+        f_start = g_start + h_start
+        heapq.heappush(frontier, (f_start, g_start, start_pos, []))
+
+        while frontier:
+            f_cost, g_cost, current_pos, path_taken = heapq.heappop(frontier)   # Pop lowest f(n) - IT24103439
+
+            if current_pos in reached_states:
+                continue
+            reached_states.add(current_pos)
+
+            if current_pos == goal_pos:
+                return path_taken
+
+            # Expand 4 adjacent neighbours (Up, Down, Left, Right) - IT24103439
+            for next_pos, action in self._get_neighbours(current_pos, walls, grid_size):
+                if next_pos not in reached_states:
+                    g_new = g_cost + 1
+                    h_new = compute_heuristic(next_pos)
+                    f_new = g_new + h_new   # Evaluation function f(n) = g(n) + h(n) - IT24103439
+                    heapq.heappush(frontier, (f_new, g_new, next_pos, path_taken + [action]))
+
+        return []
+
     # P03 - Step 1.3: Executing and Comparing Offline Plans
     def __init__(self):
         self.plan = []  # Stores the sequence of actions to execute - IT24103439
