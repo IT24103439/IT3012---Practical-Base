@@ -1,5 +1,5 @@
 import random
-import random
+import math
 from collections import deque
 import heapq
 
@@ -104,6 +104,15 @@ class ModelBasedAgent:
 # P03 - Step 1.2: The Search Agent (BFS, DFS, UCS) - IT24103439
 class SearchAgent:
     """A Goal-Based Planning Agent that uses BFS, DFS, or UCS to find a path to the nearest food pellet before taking any physical action."""
+
+    # P04 - Step 1.1: Heuristic Functions - IT24103439
+    def manhattan_distance(self, pos, goal) -> int:
+        """Calculates Manhattan distance (L1 norm): |x1 - x2| + |y1 - y2|"""
+        return abs(pos[0] - goal[0]) + abs(pos[1] - goal[1])
+
+    def euclidean_distance(self, pos, goal) -> float:
+        """Calculates Euclidean distance (L2 norm / straight-line): sqrt((x1 - x2)^2 + (y1 - y2)^2)"""
+        return math.sqrt((pos[0] - goal[0]) ** 2 + (pos[1] - goal[1]) ** 2)
 
     # Helper function which returns valid (neighbour_position, action) pairs from a given position - IT24103439
     def _get_neighbours(self, pos, walls, grid_size):
