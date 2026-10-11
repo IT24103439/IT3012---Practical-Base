@@ -2,6 +2,7 @@ import random
 import math
 from collections import deque
 import heapq
+from logic_engine import KnowledgeBase
 
 # agent.py
 class GreedyGridAgent:
@@ -218,6 +219,10 @@ class SearchAgent:
     def __init__(self):
         self.plan = []  # Stores the sequence of actions to execute - IT24103439
         self.active_algo = 'AStar'    # Active search algorithm (BFS, DFS, UCS, AStar) - IT24103439
+        # L07 - Step3.1: Defining the Game Constraints - IT24103439
+        self.kb = KnowledgeBase()
+        self.kb.tell_rule(['TargetVisible', 'HasDust'], 'SafeToEngage')
+        self.kb.tell_rule(['SafeToEngage', 'BloodseekerMissing'], 'Retreat')
 
     # If plan is empty, run the chosen search to refill it
     def sense_and_act(self, percept: dict) -> str:
