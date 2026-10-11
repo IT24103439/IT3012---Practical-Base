@@ -180,7 +180,10 @@ class SearchAgent:
         return []
 
     # P04 - Step 1.2: A* Search Implementation - IT24103439
-    def astar_search(self, start_pos, goal_pos, walls, grid_size, heuristic_type='manhattan'):
+    def astar_search(self, start_pos, goal_pos, walls, grid_size, heuristic_type='manhattan', tile_facts=None):
+        if tile_facts is None:
+            tile_facts = {}
+
         frontier = []
         reached_states = set()  # Graph search: prevents revisiting nodes - IT24103439
 
@@ -208,6 +211,14 @@ class SearchAgent:
             # Expand 4 adjacent neighbours (Up, Down, Left, Right) - IT24103439
             for next_pos, action in self._get_neighbours(current_pos, walls, grid_size):
                 if next_pos not in reached_states:
+                    # L07 - Step3.2: Validating Feasibility in A* - IT24103439
+                    self.kb.clear_facts()
+                    for fact in tile_facts.get(next_pos, []):
+                        self.kb.tell_fact(fact)
+                    self.kb.forward_chain()
+                    if 'Retreat' in self.kb.facts:
+                        continue
+
                     g_new = g_cost + 1
                     h_new = compute_heuristic(next_pos)
                     f_new = g_new + h_new   # Evaluation function f(n) = g(n) + h(n) - IT24103439
