@@ -257,7 +257,13 @@ class SearchAgent:
                 self.plan = self.ucs_search(agent_pos, tuple(closest_food), walls, grid_size)
             # P04 - Step 1.3: Integrate A* into decision loop - IT24103439
             elif self.active_algo == 'AStar':
-                self.plan = self.astar_search(agent_pos, tuple(closest_food), walls, grid_size, heuristic_type='manhattan')
+                # L07 - Step3.3: Run It in the Grid - IT24103439
+                tile_facts = {
+                    (1, 0): ['TargetVisible', 'HasDust', 'BloodseekerMissing'],
+                    (0, 1): ['TargetVisible', 'HasDust'],
+                }
+                self.plan = self.astar_search(agent_pos, tuple(closest_food), walls, grid_size,
+                                              heuristic_type='manhattan', tile_facts=tile_facts)
 
         # Execute next action from the front of the plan - IT24103439
         if self.plan:
